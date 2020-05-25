@@ -13,9 +13,6 @@ custom:
     path: ./.env
     include:
       - FIREBASE_STORAGE_BUCKET
-      - LINE_PAY_CHANNEL_ID
-      - LINE_PAY_CHANNEL_SECRET_KEY
-      - LINE_PAY_CONFIRM_URL
 
 # Add the serverless-webpack plugin
 plugins:
@@ -26,6 +23,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
+  region: ap-northeast-1
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
