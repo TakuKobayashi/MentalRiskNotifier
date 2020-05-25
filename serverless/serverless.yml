@@ -1,6 +1,12 @@
 service:
   name: mental-risk-notifier
 
+package:
+  exclude:
+    - layer/**
+    - chrome-aws-lambda/**
+    - node_modules/chrome-aws-lambda/**
+
 custom:
   stages:
     - local
@@ -37,3 +43,10 @@ functions:
     events:
       - http: ANY /
       - http: ANY /{proxy+}
+    layers:
+      - { Ref: ChromeLambdaLayer }
+
+layers:
+  chrome:
+    package:
+      artifact: layer/chrome.zip
