@@ -43,6 +43,14 @@ functions:
     events:
       - http: ANY /
       - http: ANY /{proxy+}
+  chrome-handler:
+    handler: src/chrome-handler.screenshot
+    memorySize: 2048
+    timeout: 900
+    events:
+      - http:
+          method: GET
+          path: /screenshot
     layers:
       - { Ref: ChromeLambdaLayer }
 
