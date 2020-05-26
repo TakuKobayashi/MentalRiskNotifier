@@ -10,20 +10,24 @@ export const screenshot: APIGatewayProxyHandler = async (event, _context) => {
   }
   let browser = null;
   try {
+    const viewport = {width: 1024, height: 800};
+    const query = event['queryStringParameters']
+    await chromium.font('https://raw.githack.com/googlei18n/noto-cjk/master/NotoSansJP-Black.otf');
+    const chromiumExecutablePath = await chromium.executablePath
     browser = await puppeteer.launch({
-      defaultViewport:{width:1024,height:800},
+      defaultViewport: viewport,
       headless: true,
-      executablePath: await chromium.executablePath,
+      executablePath: chromiumExecutablePath,
       args: chromium.args,
     });
 
     const page = await browser.newPage();
-    await page.goto(event['queryStringParameters'].address, {
+    await page.goto(query.address, {
       waitUntil: ['domcontentloaded', 'networkidle0'],
     });
 
     const image = await page.screenshot({
-      clip: { x: 0, y: 0, width: 1024, height: 800 },
+      clip: { x: 0, y: 0, ...viewport },
       encoding: 'base64'
     });
 
@@ -38,7 +42,8 @@ export const screenshot: APIGatewayProxyHandler = async (event, _context) => {
   } catch (error) {
     console.error(error);
     result = {
-      statusCode: 500
+      statusCode: 500,
+      message: error,
     };
   }
   finally{
