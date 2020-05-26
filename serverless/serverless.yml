@@ -12,6 +12,9 @@ custom:
     - local
     - dev
     - production
+  apigwBinary:
+    types:
+      - '*/*'
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -25,6 +28,8 @@ plugins:
   - serverless-webpack
   - serverless-dotenv-plugin
   - serverless-offline
+  - serverless-apigw-binary
+  - serverless-apigwy-binary
 
 provider:
   name: aws
@@ -51,6 +56,7 @@ functions:
       - http:
           method: GET
           path: /screenshot
+          contentHandling: CONVERT_TO_BINARY
     layers:
       - { Ref: ChromeLambdaLayer }
 

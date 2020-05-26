@@ -1,12 +1,51 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 
+const chromium = require('chrome-aws-lambda');
+const puppeteer = chromium.puppeteer;
+
 export const screenshot: APIGatewayProxyHandler = async (event, _context) => {
-  return {
+  let result: Partial<APIGatewayProxyHandler> = {
     statusCode: 200,
-    body: JSON.stringify({
-      message: 'Go Serverless Webpack (Typescript) v1.0! Your function executed successfully!',
-      input: event,
-    }, null, 2),
-  };
+  }
+  let browser = null;
+  try {
+    browser = await puppeteer.launch({
+      defaultViewport:{width:1024,height:800},
+      headless: true,
+      executablePath: await chromium.executablePath,
+      args: chromium.args,
+    });
+
+    const page = await browser.newPage();
+    await page.goto(event['queryStringParameters'].address, {
+      waitUntil: ['domcontentloaded', 'networkidle0'],
+    });
+
+    const image = await page.screenshot({
+      clip: { x: 0, y: 0, width: 1024, height: 800 },
+      encoding: 'base64'
+    });
+
+    result = {
+      statusCode: 200,
+      body: image,
+      headers: {
+        'Content-Type': 'image/png',
+      },
+      isBase64Encoded: true
+    };
+  } catch (error) {
+    console.error(error);
+    result = {
+      statusCode: 500
+    };
+  }
+  finally{
+    if(browser){
+      await browser.close();
+    }
+  }
+
+  return result;
 }
