@@ -11,7 +11,7 @@ export const screenshot: APIGatewayProxyHandler = async (event, _context) => {
   let browser = null;
   try {
     const viewport = {width: 1024, height: 800};
-    const query = event['queryStringParameters']
+    const query = event.queryStringParameters
     await chromium.font('https://raw.githack.com/googlei18n/noto-cjk/master/NotoSansJP-Black.otf');
     const chromiumExecutablePath = await chromium.executablePath
     browser = await puppeteer.launch({
@@ -22,7 +22,7 @@ export const screenshot: APIGatewayProxyHandler = async (event, _context) => {
     });
 
     const page = await browser.newPage();
-    await page.goto(query.address, {
+    await page.goto(query.url, {
       waitUntil: ['domcontentloaded', 'networkidle0'],
     });
 

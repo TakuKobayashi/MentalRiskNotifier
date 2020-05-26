@@ -50,7 +50,7 @@ functions:
       - http: ANY /{proxy+}
   chrome-handler:
     handler: src/chrome-handler.screenshot
-    memorySize: 2048
+    memorySize: 128
     timeout: 900
     events:
       - http:
